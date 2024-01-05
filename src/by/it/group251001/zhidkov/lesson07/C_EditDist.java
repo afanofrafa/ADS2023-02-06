@@ -51,6 +51,7 @@ public class C_EditDist {
             return 1;
         }
     }
+
     // Функция для определения минимального значения из трех чисел
     int min(int n1, int n2, int n3) {
         if (n1 > n2) {
@@ -62,47 +63,56 @@ public class C_EditDist {
         return n1;
     }
 
+    // Метод для вычисления редакционного предписания (расстояния Левенштейна) между двумя строками
     String getDistanceEdinting(String one, String two) {
         int n = one.length();
         int m = two.length();
-        int[][] matrix = new int[n+1][m+1];
+        int[][] matrix = new int[n + 1][m + 1]; // Инициализация матрицы для хранения расстояний
+
         // Инициализация матрицы
-        for (int i = 0; i<=n; i++){
-            for (int j = 0; j<=m; j++){
-                if ((i == 0) && (j == 0)){
-                    matrix[i][j] = 0;
-                }
-                else if (j == 0){
-                    matrix[i][j] = i;
-                }
-                else if (i == 0){
-                    matrix[i][j] = j;
-                }
-                else{
-                    matrix[i][j] = min(matrix[i][j-1]+1, matrix[i-1][j]+1, matrix[i-1][j-1]+m(i, j, one, two));
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= m; j++) {
+                if ((i == 0) && (j == 0)) {
+                    matrix[i][j] = 0; // Начальное значение: нулевое расстояние между пустыми строками
+                } else if (j == 0) {
+                    matrix[i][j] = i; // Нулевое расстояние от пустой строки до строки one
+                } else if (i == 0) {
+                    matrix[i][j] = j; // Нулевое расстояние от пустой строки до строки two
+                } else {
+                    // Обновление значения ячейки matrix[i][j] в матрице Левенштейна.
+                    // Выбирается минимальное из трех вариантов:
+                    // 1. matrix[i][j - 1] + 1: Вставка символа в строку one.
+                    // 2. matrix[i - 1][j] + 1: Удаление символа из строки one.
+                    // 3. matrix[i - 1][j - 1] + m(i, j, one, two): Замена символа, если символы не равны (m возвращает 1), или совпадение (m возвращает 0).
+                    matrix[i][j] = min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1, matrix[i - 1][j - 1] + m(i, j, one, two));
+                    // Заполнение ячейки матрицы в соответствии с алгоритмом Левенштейна
                 }
             }
         }
-        StringBuilder result = new StringBuilder();
-        int i = n, j = m;
+
+        StringBuilder result = new StringBuilder(); // Создание StringBuilder для хранения редакционного предписания
+        int i = n, j = m; // Начальные значения индексов
+
+        // Построение редакционного предписания в обратном порядке
         while (i > 0 && j > 0) {
             if (one.charAt(i - 1) == two.charAt(j - 1)) {
-                result.insert(0, "#" + ",");
+                result.insert(0, "#" + ","); // Совпадение символов
                 i--;
                 j--;
             } else if (matrix[i][j] == matrix[i - 1][j - 1] + 1) {
-                result.insert(0, "~" + two.charAt(j - 1) + ",");
+                result.insert(0, "~" + two.charAt(j - 1) + ","); // Замена символа
                 i--;
                 j--;
             } else if (matrix[i][j] == matrix[i - 1][j] + 1) {
-                result.insert(0, "-" + one.charAt(i - 1) + ",");
+                result.insert(0, "-" + one.charAt(i - 1) + ","); // Удаление символа
                 i--;
             } else if (matrix[i][j] == matrix[i][j - 1] + 1) {
-                result.insert(0, "+" + two.charAt(j - 1) + ",");
+                result.insert(0, "+" + two.charAt(j - 1) + ","); // Вставка символа
                 j--;
             }
         }
-        return result.toString();
+
+        return result.toString(); // Возвращение строки с редакционным предписанием
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -110,10 +120,10 @@ public class C_EditDist {
         InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson07/dataABC.txt");
         C_EditDist instance = new C_EditDist();
         Scanner scanner = new Scanner(stream);
-        // Вывод результатов расчета расстояния Левенштейна для трех пар строк
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
-        System.out.println(instance.getDistanceEdinting(scanner.nextLine(),scanner.nextLine()));
-    }
 
+        // Вывод результатов расчета расстояния Левенштейна для трех пар строк
+        System.out.println(instance.getDistanceEdinting(scanner.nextLine(), scanner.nextLine()));
+        System.out.println(instance.getDistanceEdinting(scanner.nextLine(), scanner.nextLine()));
+        System.out.println(instance.getDistanceEdinting(scanner.nextLine(), scanner.nextLine()));
+    }
 }

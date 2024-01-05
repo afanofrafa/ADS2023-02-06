@@ -32,31 +32,46 @@ Sample Output 3:
 
 */
 
+// Объявление класса C_Stairs
 public class C_Stairs {
+    // Метод для вычисления максимальной суммы при подъеме по лестнице
     int getMaxSum(InputStream stream) {
-
         // Чтение входных данных
         Scanner scanner = new Scanner(stream);
         int n = scanner.nextInt(); // Число ступенек лестницы
         int[] stairs = new int[n]; // Числа, которыми помечены ступеньки
+
+        // Заполнение массива stairs значениями из входных данных
         for (int i = 0; i < n; i++) {
             stairs[i] = scanner.nextInt();
         }
-        int[] sum = new int[n + 1];
-        sum[0] = 0;
-        sum[1] = stairs[0];
-        // Заполнение массива сумм методом динамического программирования
-        for (int i = 2; i <= n; i++)
-            sum[i] = Math.max(stairs[i - 1] + sum[i - 1], stairs[i - 1] + sum[i - 2]);
 
-        return sum[n];
+        // Создаем массив sum размером n + 1, где sum[i] будет содержать максимальную сумму до ступеньки i.
+        int[] sum = new int[n + 1];
+
+        // Инициализация базовых случаев:
+        sum[0] = 0; // Максимальная сумма для подъема на нулевую ступеньку равна 0.
+        sum[1] = stairs[0]; // Максимальная сумма для подъема на первую ступеньку равна значению первой ступеньки.
+
+        // Заполняем массив sum методом динамического программирования.
+        for (int i = 2; i <= n; i++) {
+            // Вычисляем максимальную сумму для ступеньки i, выбирая максимум из двух вариантов:
+            // 1. Поднимаемся на одну ступеньку (stairs[i - 1]) и прибавляем максимальную сумму до предыдущей ступеньки (sum[i - 1]).
+            // 2. Поднимаемся на две ступеньки (stairs[i - 1]) и прибавляем максимальную сумму до ступеньки, находящейся на две ступеньки ниже (sum[i - 2]).
+            sum[i] = Math.max(stairs[i - 1] + sum[i - 1], stairs[i - 1] + sum[i - 2]);
+        }
+
+
+        return sum[n]; // Возвращение максимальной суммы при подъеме по лестнице
     }
+
+    // Метод main для запуска программы
     public static void main(String[] args) throws FileNotFoundException {
         String root = System.getProperty("user.dir") + "/src/";
         InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson08/dataC.txt");
         C_Stairs instance = new C_Stairs();
         int res = instance.getMaxSum(stream);
-        System.out.println(res);
+        System.out.println(res); // Вывод результата
     }
 }
 

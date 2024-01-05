@@ -11,29 +11,28 @@ import java.util.Scanner;
 // Задача: построить max-кучу = пирамиду = бинарное сбалансированное дерево на массиве.
 // ВАЖНО! НЕЛЬЗЯ ИСПОЛЬЗОВАТЬ НИКАКИЕ КОЛЛЕКЦИИ, КРОМЕ ARRAYLIST (его можно, но только для массива)
 
-//      Проверка проводится по данным файла
-//      Первая строка входа содержит число операций 1 ≤ n ≤ 100000.
-//      Каждая из последующих nn строк задают операцию одного из следующих двух типов:
+// Проверка проводится по данным файла
+// Первая строка входа содержит число операций 1 ≤ n ≤ 100000.
+// Каждая из последующих nn строк задают операцию одного из следующих двух типов:
 
-//      Insert x, где 0 ≤ x ≤ 1000000000 — целое число;
-//      ExtractMax.
+// Insert x, где 0 ≤ x ≤ 1000000000 — целое число;
+// ExtractMax.
 
-//      Первая операция добавляет число x в очередь с приоритетами,
-//      вторая — извлекает максимальное число и выводит его.
+// Первая операция добавляет число x в очередь с приоритетами,
+// вторая — извлекает максимальное число и выводит его.
 
-//      Sample Input:
-//      6
-//      Insert 200
-//      Insert 10
-//      ExtractMax
-//      Insert 5
-//      Insert 500
-//      ExtractMax
-//
-//      Sample Output:
-//      200
-//      500
+// Sample Input:
+// 6
+// Insert 200
+// Insert 10
+// ExtractMax
+// Insert 5
+// Insert 500
+// ExtractMax
 
+// Sample Output:
+// 200
+// 500
 
 public class C_HeapMax {
 
@@ -88,7 +87,8 @@ public class C_HeapMax {
             return result; // возвращаем максимальный элемент
         }
     }
-    //эта процедура читает данные из файла, ее можно не менять.
+
+    // эта процедура читает данные из файла, ее можно не менять.
     Long findMaxValue(InputStream stream) {
         long maxValue=0L;
         MaxHeap heap = new MaxHeap(); // создание экземпляра класса MaxHeap
@@ -119,9 +119,13 @@ public class C_HeapMax {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
+        // Получаем текущую директорию пользователя и создаем путь к файлу
         String root = System.getProperty("user.dir") + "/src/";
+        // Создаем поток ввода из файла, указанного в пути
         InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson03/heapData.txt");
+        // Создаем экземпляр класса C_HeapMax
         C_HeapMax instance = new C_HeapMax();
+
         System.out.println("MAX="+instance.findMaxValue(stream)); // выводим максимальное значение
     }
 
@@ -130,4 +134,3 @@ public class C_HeapMax {
     // "В реальном бою" все существенно иначе. Изучите и используйте коллекции
     // TreeSet, TreeMap, PriorityQueue и т.д. с нужным CompareTo() для объекта внутри.
 }
-

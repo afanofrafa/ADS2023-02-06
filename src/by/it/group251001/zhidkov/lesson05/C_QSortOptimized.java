@@ -33,132 +33,180 @@ import java.util.Scanner;
 public class C_QSortOptimized {
 
     //отрезок
-    private static class Segment  implements Comparable<Segment>{
+    // Внутренний статический класс Segment, реализующий интерфейс Comparable
+    private static class Segment implements Comparable<Segment> {
         int start;
         int stop;
-        Segment(int start, int stop){
-            this.start = start;
 
+        // Конструктор класса, принимающий начальное и конечное значения отрезка
+        Segment(int start, int stop) {
+            this.start = start;
             this.stop = stop;
         }
+
+        // Реализация метода compareTo интерфейса Comparable
+        // Сравнивает отрезки на основе их конечных точек
         @Override
-        public int compareTo(Segment o){
+        public int compareTo(Segment o) {
             return this.stop - o.stop;
         }
     }
 
+
     int[] getAccessory2(InputStream stream) {
         //подготовка к чтению данных
-
         Scanner scanner = new Scanner(stream);
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        //число отрезков отсортированного массива
+        // Число отрезков отсортированного массива
         int n = scanner.nextInt();
-        Segment[] segments=new Segment[n];
+        Segment[] segments = new Segment[n];
         //число точек
         int m = scanner.nextInt();
-        int[] points=new int[m];
-        int[] result=new int[m];
-        //читаем сами отрезки
+        // Создаем массив для хранения координат точек
+        int[] points = new int[m];
+        // Создаем массив для хранения результатов (количество отрезков, содержащих каждую точку)
+        int[] result = new int[m];
+
+        // Читаем сами отрезки
         for (int i = 0; i < n; i++) {
-            //читаем начало и конец каждого отрезка
-            segments[i]= new Segment(scanner.nextInt(), scanner.nextInt());
+            // Читаем начало и конец каждого отрезка
+            segments[i] = new Segment(scanner.nextInt(), scanner.nextInt());
         }
-        //читаем точки
+        // Читаем точки
         for (int i = 0; i < m; i++) {
-            points[i]=scanner.nextInt();
+            points[i] = scanner.nextInt();
         }
-        //тут реализуйте логику задачи с применением быстрой сортировки
-        //в классе отрезка Segment реализуйте нужный для этой задачи компаратор
 
-        QSortOpt(segments,0, segments.length - 1);
 
-        for (int i = 0; i < m; i++){
-            int res_bin_search = BinarySearch(segments,points[i],0, segments.length - 1);
-            if (res_bin_search > -1){
+        // Вызываем метод оптимизированной быстрой сортировки для массива отрезков
+        QSortOpt(segments, 0, segments.length - 1);
+
+// Проходим по каждой точке
+        for (int i = 0; i < m; i++) {
+            // Ищем индекс первого отрезка, содержащего текущую точку, с помощью бинарного поиска
+            int res_bin_search = BinarySearch(segments, points[i], 0, segments.length - 1);
+
+            // Если такой отрезок найден
+            if (res_bin_search > -1) {
+                // Инициализируем счетчик отрезков, содержащих текущую точку
                 int count = 1;
+
+                // Перемещаемся вправо от найденного отрезка и увеличиваем счетчик, если точка принадлежит отрезку
                 int j = res_bin_search + 1;
-                while (j < n && points[i] <= segments[j].stop){
+                while (j < n && points[i] <= segments[j].stop) {
                     if (segments[j].start <= points[i])
                         count++;
                     j++;
                 }
+
+                // Перемещаемся влево от найденного отрезка и увеличиваем счетчик, если точка принадлежит отрезку
                 j = res_bin_search - 1;
-                while (j >= 0 && points[i] <= segments[j].stop){
+                while (j >= 0 && points[i] <= segments[j].stop) {
                     if (segments[j].start <= points[i])
                         count++;
                     j--;
                 }
+
+                // Сохраняем результат в массиве result для текущей точки
                 result[i] = count;
-            }
-            else
+            } else {
+                // Если отрезок не найден, присваиваем результату 0
                 result[i] = 0;
+            }
         }
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
+
+
         return result;
     }
+    // Класс Partition представляет группу элементов, ограниченных левой и правой границами
     public static class Partition {
-        int left;
-        int right;
+        int left;   // Левая граница группы элементов
+        int right;  // Правая граница группы элементов
 
+        // Конструктор класса Partition
         public Partition() {
         }
     }
-    Partition new_Partition(Segment[] A, int left, int right){
-        int lt = left;
-        int current = left;
-        int gt = right;
-        Segment value = A[left];
-        while(current <= gt){
-            if (A[current].compareTo(value) < 0){
+
+    // Метод для создания нового Partition при 3-разбиении
+    Partition new_Partition(Segment[] A, int left, int right) {
+        int lt = left;           // Индекс, с которого начинается группа элементов, меньших опорного
+        int current = left;       // Индекс текущего рассматриваемого элемента
+        int gt = right;           // Индекс, с которого начинается группа элементов, больших опорного
+        Segment value = A[left];   // Опорный элемент, выбранный в качестве значения для сравнения
+
+        // Цикл 3-разбиения
+        while (current <= gt) {
+            if (A[current].compareTo(value) < 0) {
+                // Обмен элементов, если текущий элемент меньше опорного
                 Segment temp = A[current];
                 A[current] = A[lt];
                 A[lt] = temp;
                 lt++;
-                current++;}
-            else{
+                current++;
+            } else {
                 if (A[current].compareTo(value) == 0)
                     current++;
-                else{
+                else {
+                    // Обмен элементов, если текущий элемент больше опорного
                     Segment temp = A[current];
                     A[current] = A[gt];
                     A[gt] = temp;
                     gt--;
                 }
-
             }
         }
-        return new Partition();
+
+        return new Partition();  // Возвращаем новый объект Partition с границами групп элементов
     }
-    void QSortOpt(Segment[] A, int left, int right){
+
+    void QSortOpt(Segment[] A, int left, int right) {
+        // Основной цикл оптимизированной быстрой сортировки
         while (left < right) {
+            // Получение нового Partition
             Partition middlePartition = new_Partition(A, left, right);
+            // Рекурсивный вызов для левой части
             QSortOpt(A, left, middlePartition.left - 1);
+            // Установка начала следующей итерации для правой части
             left = middlePartition.right + 1;
         }
     }
-    int BinarySearch(Segment[] A, int key, int left,int right){
-        boolean IsFound = false;
-        while (left <= right && !IsFound){
-            int mid = (left + right)/2;
+    // Метод для бинарного поиска
+    int BinarySearch(Segment[] A, int key, int left, int right) {
+        boolean isFound = false;
+
+        // Цикл бинарного поиска
+        while (left <= right && !isFound) {
+            int mid = (left + right) / 2;
+
+            // Проверка, в какой половине массива находится искомый элемент
             if (A[mid].start > key)
                 right = mid - 1;
             else if (A[mid].stop < key)
                 left = mid + 1;
             else {
-                IsFound = true;
+                // Элемент найден
+                isFound = true;
                 return mid;
             }
         }
+
+        // Элемент не найден
         return -1;
     }
+
     public static void main(String[] args) throws FileNotFoundException {
+        // Получение пути к текущей директории
         String root = System.getProperty("user.dir") + "/src/";
+        // Создание входного потока stream для чтения данных из файла dataC.txt
         InputStream stream = new FileInputStream(root + "by/it/a_khmelev/lesson05/dataC.txt");
+        // Создание экземпляра класса C_QSortOptimized
         C_QSortOptimized instance = new C_QSortOptimized();
-        int[] result=instance.getAccessory2(stream);
-        for (int index:result){
-            System.out.print(index+" ");
+        // Вызов метода getAccessory2 для получения результата
+        int[] result = instance.getAccessory2(stream);
+
+        // Вывод результата на экран
+        for (int index : result) {
+            System.out.print(index + " ");
         }
     }
 
